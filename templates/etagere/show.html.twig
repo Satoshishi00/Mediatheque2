@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Etagere{% endblock %}
+
+{% block body %}
+    <h1>Etagere</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ etagere.id }}</td>
+            </tr>
+            <tr>
+                <th>Numero</th>
+                <td>{{ etagere.numero }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('etagere_index') }}">back to list</a>
+
+    <a href="{{ path('etagere_edit', {'id': etagere.id}) }}">edit</a>
+
+    {{ include('etagere/_delete_form.html.twig') }}
+{% endblock %}

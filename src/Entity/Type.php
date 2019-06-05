@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,9 +24,19 @@ class Type
     private $designation;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Media", inversedBy="type")
+     * @ORM\OneToMany(targetEntity="App\Entity\Media", mappedBy="type")
      */
-    private $media;
+    private $medias;
+
+    public function __construct()
+    {
+        $this->medias = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->designation;
+    }
 
     public function getId(): ?int
     {
@@ -39,18 +51,6 @@ class Type
     public function setDesignation(string $designation): self
     {
         $this->designation = $designation;
-
-        return $this;
-    }
-
-    public function getMedia(): ?Media
-    {
-        return $this->media;
-    }
-
-    public function setMedia(?Media $media): self
-    {
-        $this->media = $media;
 
         return $this;
     }

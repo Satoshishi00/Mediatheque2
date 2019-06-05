@@ -47,4 +47,28 @@ class MembreRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /*
+     * @param array $search
+     * @return mixed
+     */
+    public function search(array $search = null){
+        $qb = $this->createQueryBuilder('m');
+        if(isset($search['nom']) && !empty($search['nom'])){
+            $qb->andWhere(
+                $qb->expr()->like('m.nom',
+                    $qb->expr()->literal( '%'.$search['nom'].'%')));
+        }
+        if(isset($search['date']) && !empty($search['date'])){
+            $qb->andWhere(
+                $qb->expr()->eq('m.created_at', $qb->expr()->literal($search['date']->format('Y-m-d H:i:s')))
+            );
+
+        }
+        dd($search);
+        if(isset($search['type']) && !empty($search['type'])){
+            $qb->andWhere($qb->expr()->literal( '%'.$search['type'].'%'));
+        }
+        return $qb->getQuery()->getResult();
+    }
 }

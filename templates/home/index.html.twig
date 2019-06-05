@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="col">
+        <h1>Mon board</h1>
+        <div class="col-6">
+            <h3>Membres</h3>
+            <table>
+                <tr>
+                <th>nom</th>
+                <th class="col-7">inscription</th>
+                {% for membre in membres %}
+                    <tr>
+                        <td><a href='{{ path('membre_show', {'id': membre.id}) }}'>{{ membre.nom }}</a></td>
+                        <td class="col-7">{{ membre.createdAt|date('d-m-Y') }}</td>
+                    </tr>
+                {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{{ path('membre_index') }}">
+                            <button class="btn btn-primary">Listing</button>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <h3>Médias</h3>
+            <table>
+                <th >nom</th>
+                <th class="col-7">description</th>
+                {% for media in medias %}
+                    <tr>
+                        <td><a href='{{ path('media_show', {'id': media.id}) }}'>{{ media.nom }}</a></td>
+                        <td class="col-7">{{ media.designation }}</td>
+                    </tr>
+                {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{{ path('media_index') }}">
+                            <button class="btn btn-primary">Listing</button>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <h3>Historique</h3>
+            <table>
+                <th>membre</th>
+                <th>media</th>
+                <th>début d'emprunt</th>
+                <th>fin d'emprunt</th>
+                {% for historique in historiques %}
+                    <tr>
+                        <td>{{ historique.membre }}</td>
+                        <td>{{ historique.media }}</td>
+                        <td>{{ historique.empruntAt|date('d-m-Y') }}</td>
+                        <td>{{ historique.retourAt|date('d-m-Y') }}</td>
+                    </tr>
+                {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{{ path('historique_index') }}">
+                            <button class="btn btn-primary">Listing</button>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

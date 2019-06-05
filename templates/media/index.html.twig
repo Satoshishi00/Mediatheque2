@@ -5,19 +5,25 @@
 {% block body %}
     <h1>Media index</h1>
 
+    {{ dump(paginator) }}
+    {% for i in 1..paginator.nb_pages %}
+        <a href="{{ path('media_index',{'page' : i}) }}">
+            <button class="btn {% if i == paginator.page %}btn-danger{% else %}btn-primary{% endif %}">{{ i }}</button>
+        </a>
+    {% endfor %}
     <table class="table">
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Designation</th>
-                <th>Created_at</th>
-                <th>Updated_at</th>
-                <th>actions</th>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <th>Nom</th>
+            <th>Designation</th>
+            <th>Created_at</th>
+            <th>Updated_at</th>
+            <th>actions</th>
+        </tr>
         </thead>
         <tbody>
-        {% for medium in media %}
+        {% for medium in paginator.query %}
             <tr>
                 <td>{{ medium.id }}</td>
                 <td>{{ medium.nom }}</td>
@@ -29,7 +35,6 @@
                     <a href="{{ path('media_edit', {'id': medium.id}) }}">edit</a>
                 </td>
             </tr>
-        {% else %}
             <tr>
                 <td colspan="6">no records found</td>
             </tr>

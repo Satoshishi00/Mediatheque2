@@ -17,6 +17,7 @@ class MediaType extends AbstractType
             ->add('created_at')
             ->add('updated_at')
             ->add('etagere')
+            ->add('type')
         ;
     }
 

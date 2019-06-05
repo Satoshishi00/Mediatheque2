@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Media;
+use App\Form\MediaSearchType;
 use App\Form\MediaType;
+use App\Form\SearchType;
 use App\Repository\MediaRepository;
+use App\Service\BibliothequeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +21,12 @@ class MediaController extends AbstractController
     /**
      * @Route("/", name="media_index", methods={"GET"})
      */
-    public function index(MediaRepository $mediaRepository): Response
+    public function index(Request $request, MediaRepository $mediaRepository, BibliothequeService $bibliothequeService): Response
     {
         return $this->render('media/index.html.twig', [
-            'media' => $mediaRepository->findAll(),
+            'paginator' => $bibliothequeService->paginator($mediaRepository, $request->query->get('page', 1), 1)
         ]);
+        dd(paginate.nbpages);
     }
 
     /**
@@ -45,6 +49,27 @@ class MediaController extends AbstractController
         return $this->render('media/new.html.twig', [
             'medium' => $medium,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/search", name="media_search", methods={"GET","POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function search(Request $request)
+    {
+        $form = $this->createForm(MediaSearchType::class);
+        $form->handleRequest($request);
+        $results = [];
+        if($form->isSubmitted() && $form->isValid()){
+            $results = $this->getDoctrine()->getRepository(Media::class)->search($form->getData());
+        }
+//         $search = $request->request->get('search-input', null);
+//         $query = (!$search) ? [] : $this->getDoctrine()->getManager()->getRepository(Media::class)->search($search);
+        return $this->render('media/search.html.twig', [
+            'results' => $results,
+            'form' => $form-> createView()
         ]);
     }
 
@@ -93,4 +118,6 @@ class MediaController extends AbstractController
 
         return $this->redirectToRoute('media_index');
     }
+
+    
 }

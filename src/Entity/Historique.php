@@ -27,6 +27,21 @@ class Historique
      */
     private $media;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $emprunt_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $retour_at;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $relance;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +67,42 @@ class Historique
     public function setMedia(?Media $media): self
     {
         $this->media = $media;
+
+        return $this;
+    }
+
+    public function getEmpruntAt(): ?\DateTimeInterface
+    {
+        return $this->emprunt_at;
+    }
+
+    public function setEmpruntAt(\DateTimeInterface $emprunt_at): self
+    {
+        $this->emprunt_at = $emprunt_at;
+
+        return $this;
+    }
+
+    public function getRetourAt(): ?\DateTimeInterface
+    {
+        return $this->retour_at;
+    }
+
+    public function setRetourAt($retour_at = null): self
+    {
+        $this->retour_at = $retour_at;
+
+        return $this;
+    }
+
+    public function getRelance(): ?int
+    {
+        return $this->relance;
+    }
+
+    public function setRelance(?int $relance): self
+    {
+        $this->relance = $relance;
 
         return $this;
     }

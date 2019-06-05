@@ -39,6 +39,11 @@ class Etagere
         $this->media = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return (string)$this->numero;
+    }
+
     public function getBibliotheque(): ?Bibliotheque
     {
         return $this->bibliotheque;

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for result in results %}
+        {% for historique in result %}
+            {{ historique.media.nom }} - {{ historique.empruntAt|date('d-m-Y') }}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

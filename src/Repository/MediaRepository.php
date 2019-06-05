@@ -47,4 +47,28 @@ class MediaRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function search(array $search = null){
+        $qb = $this->createQueryBuilder('m');
+        if(isset($search['nom']) && !empty($search['nom'])){
+            $qb->andWhere(
+                $qb->expr()->like('m.nom',
+                    $qb->expr()->literal( '%'.$search['nom'].'%')));
+        }
+        if(isset($search['date']) && !empty($search['date'])){
+            $qb->andWhere(
+                $qb->expr()->eq('m.created_at', $qb->expr()->literal($search['date']->format('Y-m-d H:i:s')))
+            );
+
+        }
+        if(isset($search['sortie']) && $search['sortie']){
+            $qb->innerJoin('m.historiques', 'h')
+                ->andWhere($qb->expr()->isNull('h.retour_at'));
+        }
+        dd($search);
+        if(isset($search['type']) && $search['type']){
+            $qb->expr()->eq('m.designation', '%'.$search['type']->designation.'%');
+        }
+        return $qb->getQuery()->getResult();
+    }
 }

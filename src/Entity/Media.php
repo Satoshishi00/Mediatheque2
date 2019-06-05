@@ -39,7 +39,7 @@ class Media
     private $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Type", mappedBy="media")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="medias")
      */
     private $type;
 
@@ -56,8 +56,12 @@ class Media
 
     public function __construct()
     {
-        $this->type = new ArrayCollection();
         $this->historiques = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->nom;
     }
 
     public function getId(): ?int
@@ -113,36 +117,6 @@ class Media
         return $this;
     }
 
-    /**
-     * @return Collection|Type[]
-     */
-    public function getType(): Collection
-    {
-        return $this->type;
-    }
-
-    public function addType(Type $type): self
-    {
-        if (!$this->type->contains($type)) {
-            $this->type[] = $type;
-            $type->setMedia($this);
-        }
-
-        return $this;
-    }
-
-    public function removeType(Type $type): self
-    {
-        if ($this->type->contains($type)) {
-            $this->type->removeElement($type);
-            // set the owning side to null (unless already changed)
-            if ($type->getMedia() === $this) {
-                $type->setMedia(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|Historique[]
@@ -186,4 +160,17 @@ class Media
 
         return $this;
     }
+
+    public function getType(): ?Type
+    {
+        return $this->type;
+    }
+
+    public function setType(?Type $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
 }

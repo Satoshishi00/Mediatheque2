@@ -9,13 +9,21 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Membres</th>
+                <th>Médias</th>
+                <th>Emprunt</th>
+                <th>Retour</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for historique in historiques %}
             <tr>
-                <td>{{ historique.id }}</td>
+                <td><a href='{{ path('historique_show', {'id': historique.id}) }}'>{{ historique.id }}</a></td>
+                <td><a href='{{ path('membre_show', {'id': historique.membre.id}) }}'>{{ historique.membre.id }}</a></td>
+                <td><a href='{{ path('media_show', {'id': historique.id}) }}'>{{ historique.media }}</a></td>
+                <td>{{ historique.empruntAt|date('d-m-Y') }}</td>
+                <td>{{ historique.retourAt|date('d-m-Y') }}</td>
                 <td>
                     <a href="{{ path('historique_show', {'id': historique.id}) }}">show</a>
                     <a href="{{ path('historique_edit', {'id': historique.id}) }}">edit</a>

@@ -12,6 +12,8 @@ class HistoriqueType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('emprunt_at')
+            ->add('retour_at')
             ->add('membre')
             ->add('media')
         ;

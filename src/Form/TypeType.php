@@ -13,7 +13,6 @@ class TypeType extends AbstractType
     {
         $builder
             ->add('designation')
-            ->add('media')
         ;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Historique;
+use App\Entity\Membre;
 use App\Repository\HistoriqueRepository;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -10,6 +11,11 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 class BibliothequeService{
+
+    public function __construct(\Swift_Mailer $mailer)
+    {
+        $this->mymailer = $mailer;
+    }
 
     public function paginator(ServiceEntityRepository $serviceEntityRepository, $page = 1, $limit = 10)
     {
@@ -79,7 +85,14 @@ class BibliothequeService{
             /** @var Historique $item */
             foreach ($items as $item){
                 if($item->getRelance() < $dayRelance[$key]){
-                    $this->mailing($item->getRelance(), $datas);
+                    $datas = [  'users' => $item->getMembre(),
+                                'template_datas' => ['nb_jours' => $item->getEmpruntAt()->diff(new \DateTime())->days,
+                                                    'emprunt_at'=> $item->getEmpruntAt(),
+                                                    'media_nom' => $item->getMedia()->getNom()
+
+                                ]
+                    ];
+                    $this->mailing($item->getRelance(), $datas['users']);
                     $item->setRelance($dayRelance[$key]);
                     $doctrine->getManager()->persist($item);
                     $doctrine->getManager()->flush();
@@ -89,8 +102,36 @@ class BibliothequeService{
     }
 
 
-    public function mailing()
+    public function mailing($codeTemplate = null, $datas = [])
     {
+        $templates = [
+            '10' => [
+                'path_template' => 'Email/premiere-relance.html.twig',
+                'subject' => 'première relance'
+
+            ],
+            '20' => [
+                'path_template' => 'Email/deuxieme-relance.html.twig',
+                'subject' => 'deuxième relance'
+
+            ],
+            '30' => [
+                'path_template' => 'Email/troisieme-relance.html.twig',
+                'subject' => 'troisième relance'
+
+            ]
+        ];
+
+        if(array_key_exists($codeTemplate, $templates)){
+            $message = (new \Swift_Message(
+                $templates[$codeTemplate]['subject']))
+                    ->setFrom('no-reply@bibliotheque.fr')
+                    ->setTo($datas)
+                    ->setBody("Successfully got SwiftMailer to email from Symfony4 ");
+
+            $this->mymailer->createMessage($message);
+        }
+
 
     }
 

@@ -32,13 +32,28 @@ class Bibliotheque
     {
         $this->etageres = new ArrayCollection();
     }
+	
+	public function __toString()
+	{
+		return $this->nom;
+	}
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function __toString()
+    public function getNom(): ?string
     {
         return $this->nom;
     }
-    
-    
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Etagere[]
      */
@@ -69,23 +84,4 @@ class Bibliotheque
 
         return $this;
     }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): self
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
-
-    
 }

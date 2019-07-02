@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Media;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -48,27 +49,41 @@ class MediaRepository extends ServiceEntityRepository
     }
     */
 
-    public function search(array $search = null){
+    /**
+     * @param array $search
+     * @return mixed
+     */
+    public function search(array $search = [])
+    {
         $qb = $this->createQueryBuilder('m');
-        if(isset($search['nom']) && !empty($search['nom'])){
+
+        if (isset($search['nom']) && !empty($search['nom'])) {
             $qb->andWhere(
                 $qb->expr()->like('m.nom',
-                    $qb->expr()->literal( '%'.$search['nom'].'%')));
-        }
-        if(isset($search['date']) && !empty($search['date'])){
-            $qb->andWhere(
-                $qb->expr()->eq('m.created_at', $qb->expr()->literal($search['date']->format('Y-m-d H:i:s')))
+                    $qb->expr()->literal('%' . $search['nom'] . '%')
+                )
             );
+        }
 
+        if (isset($search['date']) && !empty($search['date'])) {
+            $qb->andWhere(
+                $qb->expr()->eq('m.created_at',
+                    $qb->expr()->literal($search['date']->format('Y-m-d H:i:s'))
+                )
+            );
         }
-        if(isset($search['sortie']) && $search['sortie']){
+//dd($search);
+        if (isset($search['sortie']) && $search['sortie']) {
+            //dd('ici');
             $qb->innerJoin('m.historiques', 'h')
-                ->andWhere($qb->expr()->isNull('h.retour_at'));
+            ->andWhere($qb->expr()->isNull('h.retour_at'));
         }
-        dd($search);
-        if(isset($search['type']) && $search['type']){
-            $qb->expr()->eq('m.designation', '%'.$search['type']->designation.'%');
+
+        if (isset($search['type']) && $search['type']) {
+            //dd('ici');
+            $qb->andWhere($qb->expr()->eq('m.type', $search['type']->getId()));
         }
+
         return $qb->getQuery()->getResult();
     }
 }

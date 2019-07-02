@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Historique;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @method Historique|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,17 +17,6 @@ class HistoriqueRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Historique::class);
-    }
-
-    public function notReturn(\DateTime $date)
-    {
-        $q = $this->createQueryBuilder('h');
-        $q->where(
-            $q->expr()->isNull('h.retour_at')
-        )->andWhere(
-            $q->expr()->lte('h.emprunt_at', $q->expr()->literal($date->format('Y-m-d')))
-            );
-        return $q->getQuery()->getResult();
     }
 
     // /**
@@ -60,5 +48,20 @@ class HistoriqueRepository extends ServiceEntityRepository
     }
     */
 
+    public function notReturn(\DateTime $date)
+    {
+        $q = $this->createQueryBuilder('h');
+        $q->where(
+            $q->expr()->isNull('h.retour_at')
+        )
+            ->andWhere(
+                $q->expr()->lte('h.emprunt_at',
+                    $q->expr()->literal(
+                        $date->format('Y-m-d')
+                    )
+                )
+            );
 
+        return $q->getQuery()->getResult();
+    }
 }

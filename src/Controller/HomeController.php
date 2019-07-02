@@ -13,16 +13,18 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
+	 * @Route("/home", name="home2")
      */
     public function index()
     {
-        $membres = $this->getDoctrine()->getRepository(Membre::class)->findAll();
-        $medias = $this->getDoctrine()->getRepository(Media::class)->findAll();
-        $historiques = $this->getDoctrine()->getRepository(Historique::class)->findAll();
-        return $this->render('home/index.html.twig', [
+		$membres = $this->getDoctrine()->getRepository(Membre::class)->findAll();
+		$medias = $this->getDoctrine()->getRepository(Media::class)->findAll();
+		$historique = $this->getDoctrine()->getRepository(Historique::class)->findAll();
+        
+		return $this->render('home/index.html.twig', [
             'membres' => $membres,
-            'medias' => $medias,
-            'historiques' => $historiques,
+			'medias' => $medias,
+			'historiques' => $historique
         ]);
     }
 
@@ -31,9 +33,7 @@ class HomeController extends AbstractController
      */
     public function test(BibliothequeService $bibliothequeService)
     {
-        //dd($bibliothequeService->notReturn($this->getDoctrine()->getRepository(Historique::class)));
         dd($bibliothequeService->notReturnSendMail($this->getDoctrine()));
+        //dd($bibliothequeService->notReturn($this->getDoctrine()->getRepository(Historique::class)));
     }
-
 }
-

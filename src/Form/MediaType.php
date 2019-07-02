@@ -6,6 +6,7 @@ use App\Entity\Media;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class MediaType extends AbstractType
 {
@@ -18,6 +19,14 @@ class MediaType extends AbstractType
             ->add('updated_at')
             ->add('etagere')
             ->add('type')
+            ->add('imageFile', VichImageType::class,[
+                'required' => false,
+                'allow_delete' => true,
+                'download_label' => 'image',
+                'download_uri' => true,
+                'image_uri' => true,
+                'imagine_pattern' => 'my_thumb'
+            ])
         ;
     }
 

@@ -1,24 +1,59 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-    providers:
-        in_memory: { memory: ~ }
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        main:
-            anonymous: true
+  role_hierarchy:
+    ROLE_USER: ROLE_USER
+    ROLE_ADMIN: ROLE_USER
+    ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_MAG]
+    ROLE_ARIES: [ROLE_SUPER_ADMIN]
+    ROLE_MAG: [ROLE_MAG, ROLE_USER]
+  encoders:
+    App\Entity\Membre:
+      algorithm: bcrypt
+      cost: 12
+      #algorithm: sodium
+      #memory_cost: 16384 # Amount in KiB. 16 MiB
+      #time_cost: 2 # Number of iterations
+      #threads: 4 # Number of parallel threads
+  # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+  providers:
+    bdd:
+      entity:
+        class: App\Entity\Membre
+        property: email
 
-            # activate different ways to authenticate
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    main:
+      pattern:    ^/
+      http_basic: ~
+      provider: bdd
+      anonymous: ~
+      form_login:
+        default_target_path: /
+        login_path: /login
+        check_path: /login
+        #use_referer: true
+      logout:
+        path:   /logout
+        target: /login
+      guard:
+        authenticators:
+          - App\Security\LoginFormAuthenticator
 
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+      # activate different ways to authenticate
 
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
+      # http_basic: true
+      # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
-    access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+      # form_login: true
+      # https://symfony.com/doc/current/security/form_login_setup.html
+
+  # Easy way to control access for large sections of your site
+  # Note: Only the *first* access control that matches will be used
+  access_control:
+    - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/, roles: IS_AUTHENTICATED_FULLY}
+    # - { path: ^/admin, roles: [ROLE_ADMIN, ROLE_USER] }
+    # - { path: ^/profile, roles: ROLE_USER }

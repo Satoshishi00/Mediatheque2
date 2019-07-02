@@ -38,10 +38,27 @@ class Etagere
     {
         $this->media = new ArrayCollection();
     }
+	
+	public function __toString()
+	{
+		return "etagere" . $this->numero;
+	}
 
-    public function __toString()
+    public function getId(): ?int
     {
-        return (string)$this->numero;
+        return $this->id;
+    }
+
+    public function getNumero(): ?int
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(int $numero): self
+    {
+        $this->numero = $numero;
+
+        return $this;
     }
 
     public function getBibliotheque(): ?Bibliotheque
@@ -86,24 +103,4 @@ class Etagere
 
         return $this;
     }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getNumero(): ?int
-    {
-        return $this->numero;
-    }
-
-    public function setNumero(int $numero): self
-    {
-        $this->numero = $numero;
-
-        return $this;
-    }
-
-   
-    
 }

@@ -20,6 +20,10 @@
                 <td>{{ medium.designation }}</td>
             </tr>
             <tr>
+                <th>Image</th>
+                <td>{{ medium.getImageFile }}</td>
+            </tr>
+            <tr>
                 <th>Created_at</th>
                 <td>{{ medium.createdAt ? medium.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
@@ -27,6 +31,7 @@
                 <th>Updated_at</th>
                 <td>{{ medium.updatedAt ? medium.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
+
         </tbody>
     </table>
 

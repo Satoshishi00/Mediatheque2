@@ -24,6 +24,7 @@ class Historique
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Media", inversedBy="historiques")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $media;
 
@@ -88,7 +89,7 @@ class Historique
         return $this->retour_at;
     }
 
-    public function setRetourAt($retour_at = null): self
+    public function setRetourAt(\DateTimeInterface $retour_at): self
     {
         $this->retour_at = $retour_at;
 

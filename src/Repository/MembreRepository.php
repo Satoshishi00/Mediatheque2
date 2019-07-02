@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Media;
 use App\Entity\Membre;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -47,28 +49,38 @@ class MembreRepository extends ServiceEntityRepository
         ;
     }
     */
-
-    /*
+    /**
      * @param array $search
      * @return mixed
      */
-    public function search(array $search = null){
+    public function search(array $search = [])
+    {
         $qb = $this->createQueryBuilder('m');
-        if(isset($search['nom']) && !empty($search['nom'])){
+
+        if (isset($search['nom']) && !empty($search['nom'])) {
             $qb->andWhere(
                 $qb->expr()->like('m.nom',
-                    $qb->expr()->literal( '%'.$search['nom'].'%')));
-        }
-        if(isset($search['date']) && !empty($search['date'])){
-            $qb->andWhere(
-                $qb->expr()->eq('m.created_at', $qb->expr()->literal($search['date']->format('Y-m-d H:i:s')))
+                    $qb->expr()->literal('%' . $search['nom'] . '%')
+                )
             );
+        }
 
+        if (isset($search['date']) && !empty($search['date'])) {
+            $qb->andWhere(
+                $qb->expr()->eq('m.created_at',
+                    $qb->expr()->literal($search['date']->format('Y-m-d H:i:s'))
+                )
+            );
         }
-        dd($search);
-        if(isset($search['type']) && !empty($search['type'])){
-            $qb->andWhere($qb->expr()->literal( '%'.$search['type'].'%'));
+
+        if (isset($search['sortie']) && $search['sortie']) {
+            //dd('ici');
+//            $qb->addSelect('h');
+//            $qb->addSelect('me');
+            $qb->innerJoin('m.historiques', 'h');
+            $qb->innerJoin(Media::class, 'me', Join::WITH, 'h.media = me.id');
         }
+
         return $qb->getQuery()->getResult();
     }
 }

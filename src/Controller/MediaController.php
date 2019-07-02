@@ -19,14 +19,31 @@ use Symfony\Component\Routing\Annotation\Route;
 class MediaController extends AbstractController
 {
     /**
+     * @Route("/search", name="media_search", methods={"GET","POST"})
+     */
+    public function search(Request $request)
+    {
+
+        $form = $this->createForm(MediaSearchType::class);
+        $form->handleRequest($request);
+        $results = [];
+        if ($form->isSubmitted() && $form->isValid()) {
+            $results = $this->getDoctrine()->getRepository(Media::class)->search($form->getData());
+        }
+
+        return $this->render('membre/search.html.twig', [
+            'results' => $results,
+            'form' => $form->createView()
+        ]);
+    }
+    /**
      * @Route("/", name="media_index", methods={"GET"})
      */
-    public function index(Request $request, MediaRepository $mediaRepository, BibliothequeService $bibliothequeService): Response
+    public function index(Request $request,MediaRepository $mediaRepository, BibliothequeService $bibliothequeService): Response
     {
         return $this->render('media/index.html.twig', [
-            'paginator' => $bibliothequeService->paginator($mediaRepository, $request->query->get('page', 1), 1)
+            'paginate' => $bibliothequeService->paginator($mediaRepository, $request->query->get('page', 1),2),
         ]);
-        dd(paginate.nbpages);
     }
 
     /**
@@ -52,26 +69,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/search", name="media_search", methods={"GET","POST"})
-     * @param Request $request
-     * @return Response
-     */
-    public function search(Request $request)
-    {
-        $form = $this->createForm(MediaSearchType::class);
-        $form->handleRequest($request);
-        $results = [];
-        if($form->isSubmitted() && $form->isValid()){
-            $results = $this->getDoctrine()->getRepository(Media::class)->search($form->getData());
-        }
-//         $search = $request->request->get('search-input', null);
-//         $query = (!$search) ? [] : $this->getDoctrine()->getManager()->getRepository(Media::class)->search($search);
-        return $this->render('media/search.html.twig', [
-            'results' => $results,
-            'form' => $form-> createView()
-        ]);
-    }
+
 
     /**
      * @Route("/{id}", name="media_show", methods={"GET"})
@@ -110,7 +108,7 @@ class MediaController extends AbstractController
      */
     public function delete(Request $request, Media $medium): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$medium->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $medium->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($medium);
             $entityManager->flush();
@@ -119,5 +117,4 @@ class MediaController extends AbstractController
         return $this->redirectToRoute('media_index');
     }
 
-    
 }

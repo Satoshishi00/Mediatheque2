@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MembreRepository")
  */
-class Membre
+class Membre implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -53,13 +55,35 @@ class Membre
      */
     private $historiques;
 
+    /**
+     * @ORM\Column(type="string", length=4096)
+     */
+    private $password;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $role = [];
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $username;
+
+    /**
+     * @Assert\Length(max=64, min=8)
+     * @Assert\Regex("/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)/", message="user.assert.password.invalid")
+     */
+    private $plainPassword;
+
+
     public function __construct()
     {
         $this->historiques = new ArrayCollection();
+        $this->setRole(['ROLE_SUPER_ADMIN']);
     }
-
-    public function __toString()
-    {
+	
+	public function __toString(){
         return $this->nom;
     }
 
@@ -167,6 +191,98 @@ class Membre
                 $historique->setMembre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getRole(): ?array
+    {
+        return $this->role;
+    }
+
+    public function setRole(array $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Returns the roles granted to the user.
+     *
+     *     public function getRoles()
+     *     {
+     *         return ['ROLE_USER'];
+     *     }
+     *
+     * Alternatively, the roles might be stored on a ``roles`` property,
+     * and populated in any number of different ways when the user object
+     * is created.
+     *
+     * @return (Role|string)[] The user roles
+     */
+    public function getRoles()
+    {
+        return $this->getRole();
+        // TODO: Implement getRoles() method.
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }

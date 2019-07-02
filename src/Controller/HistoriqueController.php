@@ -86,7 +86,7 @@ class HistoriqueController extends AbstractController
      */
     public function delete(Request $request, Historique $historique): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$historique->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $historique->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($historique);
             $entityManager->flush();
@@ -100,17 +100,8 @@ class HistoriqueController extends AbstractController
      */
     public function mediasNonRetourne(BibliothequeService $bibliothequeService)
     {
-        return $this->render('historique/non_rendu.html.twig', [
+        return $this->render('historique/no-rendu.html.twig', [
             'results' => $bibliothequeService->notReturn($this->getDoctrine()->getRepository(Historique::class))
         ]);
     }
-
-    public function relance(BibliothequeService $bibliothequeService)
-    {
-        return $this->render('mail/send_mail.html.twig', [
-            'results' => $bibliothequeService->notReturn($this->getDoctrine()->getRepository(Historique::class))
-    ]);
-    }
-
-
 }
